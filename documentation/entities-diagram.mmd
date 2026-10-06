@@ -1,0 +1,66 @@
+classDiagram
+    SaleableItem <|.. ProductEntity
+    Serializable <|.. ProductEntity
+
+    ProductEntity <|-- ElectronicProductEntity
+    ProductEntity <|-- TicketEntity
+    ProductEntity <|-- PublicationEntity
+
+    ElectronicProductEntity <|-- LaptopEntity
+    ElectronicProductEntity <|-- SmartPhoneEntity
+
+    CartEntity "1" --> "*" ProductEntity : contains
+
+    class SaleableItem {
+        <<interface>>
+        +getPrice() double
+        +sellItem() void
+    }
+
+    class Serializable {
+        <<interface>>
+    }
+
+    class ProductEntity {
+        <<abstract>>
+        -Long id
+        -double price
+        -String description
+        +getPrice() double
+        +sellItem()* void
+    }
+
+    class ElectronicProductEntity {
+        <<abstract>>
+        -String brand
+    }
+
+    class LaptopEntity {
+        -int ramGb
+        -int storageGb
+        -String processor
+        +sellItem() void
+    }
+
+    class SmartPhoneEntity {
+        -double screenSize
+        -int batteryCapacity
+        +sellItem() void
+    }
+
+    class TicketEntity {
+        +sellItem() void
+    }
+
+    class PublicationEntity {
+        <<abstract>>
+        -String title
+        -int copies
+    }
+
+    class CartEntity {
+        -Long id
+        -List~ProductEntity~ products
+        +addProduct(ProductEntity product)
+        +removeProduct(ProductEntity product)
+    }
