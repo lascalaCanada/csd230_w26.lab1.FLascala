@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!-- Page title displayed in the browser tab -->
+    <title>Available Laptops</title>
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<nav>
+    <a th:href="@{/books}">Books</a> |
+    <a th:href="@{/laptops}">Laptops</a> |
+    <a th:href="@{/smartphones}">Smartphones</a> |
+    <a th:href="@{/cart}">View Shopping Cart</a>
+</nav>
+
+<h1>Available Laptops</h1>
+
+<!-- Laptops Table (rendered only if laptops list is not empty) -->
+<table border="1" th:if="${laptops != null and not #lists.isEmpty(laptops)}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Brand / Model</th>
+        <th>Price</th>
+        <th>Copies</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Iterate over the laptops collection provided by the Controller -->
+    <!-- 'th:if="${laptop != null}"' prevents errors if a null element exists in the list -->
+    <tr th:each="laptop : ${laptops}" th:if="${laptop != null}">
+        <td th:text="${laptop.id}"></td>
+        <td th:text="${laptop.description}"></td>
+        <td th:text="${laptop.price}"></td>
+        <!-- Stock left, so the drop after a checkout is visible -->
+        <td th:text="${laptop.copies}"></td>
+        <td>
+            <form th:action="@{/cart/add}" method="post">
+                <input type="hidden" name="productId" th:value="${laptop.id}" />
+                <button type="submit" class="btn btn-primary">Add to Cart</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Fallback message displayed if no laptops are available -->
+<div th:if="${laptops == null or #lists.isEmpty(laptops)}">
+    <p>No laptops available at the moment.</p>
+</div>
+
+</body>
+</html>

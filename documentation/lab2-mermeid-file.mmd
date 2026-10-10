@@ -1,0 +1,36 @@
+classDiagram
+    class ProductEntity {
+        <<abstract>>
+        -Long id
+        +getProductType() String
+    }
+
+    class PublicationEntity {
+        <<abstract>>
+        -String title
+        -double price
+        -int copies
+    }
+
+    class BookEntity {
+        -String author
+    }
+
+    class CartEntity {
+        -Long id
+        -Set~ProductEntity~ products
+        +addProduct(ProductEntity)
+    }
+
+    class OrderEntity {
+        -Long id
+        -double totalAmount
+        -LocalDateTime orderDate
+        -Set~ProductEntity~ products
+        +addProduct(ProductEntity)
+    }
+
+    ProductEntity <|-- PublicationEntity
+    PublicationEntity <|-- BookEntity
+    CartEntity "*" -- "*" ProductEntity : cart_products
+    OrderEntity "*" -- "*" ProductEntity : order_products
