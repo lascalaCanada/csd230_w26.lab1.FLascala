@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!-- Page title displayed in the browser tab -->
+    <title>Shopping Cart</title>
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<nav>
+    <a th:href="@{/books}">Books</a> |
+    <a th:href="@{/laptops}">Laptops</a> |
+    <a th:href="@{/smartphones}">Smartphones</a> |
+    <a th:href="@{/cart}">View Shopping Cart</a>
+</nav>
+
+<h1>Shopping Cart Details</h1>
+
+<!-- Cart Contents Table (rendered only if cart exists and products list is not empty) -->
+<table border="1" th:if="${cart != null and cart.products != null and not #lists.isEmpty(cart.products)}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Product Description / Title</th>
+        <th>Price</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Iterate over products currently in the shopping cart -->
+    <tr th:each="product : ${cart.products}" th:if="${product != null}">
+        <td th:text="${product.id}"></td>
+        <!-- Displays title for publications or description for other products.
+             The type check matters: asking for product.title on a laptop or smartphone
+             throws an error, because only publications have that property. -->
+        <td th:text="${product instanceof T(csd230.lab1.entities.PublicationEntity) ? product.title : product.description}"></td>
+        <!-- Uses getPrice() which correctly calls PublicationEntity.getPrice() for books -->
+        <td th:text="${product.getPrice()}"></td>
+        <td>
+            <!-- Action link to remove selected item from shopping cart -->
+            <a th:href="@{/cart/remove/{id}(id=${product.id})}">Remove</a>
+        </td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <!-- Sum of the item prices, calculated in CartController.viewCart() -->
+    <tr>
+        <td colspan="2"><strong>Total</strong></td>
+        <td colspan="2"><strong th:text="${#numbers.formatDecimal(total, 1, 'COMMA', 2, 'POINT')}"></strong></td>
+    </tr>
+    </tfoot>
+</table>
+
+<!-- Fallback message displayed when cart is empty -->
+<div th:if="${cart == null or cart.products == null or #lists.isEmpty(cart.products)}">
+    <p>Your shopping cart is currently empty.</p>
+</div>
+
+<br/>
+
+<!-- Checkout form processing button -->
+<form th:action="@{/cart/checkout}" method="post" th:if="${cart != null and cart.products != null and not #lists.isEmpty(cart.products)}">
+    <button type="submit">Proceed to Checkout</button>
+</form>
+
+</body>
+</html>

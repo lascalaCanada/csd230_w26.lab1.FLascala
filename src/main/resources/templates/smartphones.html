@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!-- Page title displayed in the browser tab -->
+    <title>Available Smartphones</title>
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<nav>
+    <a th:href="@{/books}">Books</a> |
+    <a th:href="@{/laptops}">Laptops</a> |
+    <a th:href="@{/smartphones}">Smartphones</a> |
+    <a th:href="@{/cart}">View Shopping Cart</a>
+</nav>
+
+<h1>Available Smartphones</h1>
+
+<!-- Smartphones Table (rendered only if smartphones list is not empty) -->
+<table border="1" th:if="${smartphones != null and not #lists.isEmpty(smartphones)}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Brand / Model</th>
+        <th>Price</th>
+        <th>Copies</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Iterate over the smartphones collection provided by the Controller -->
+    <!-- 'th:if="${phone != null}"' prevents errors if a null element exists in the list -->
+    <tr th:each="phone : ${smartphones}" th:if="${phone != null}">
+        <td th:text="${phone.id}"></td>
+        <td th:text="${phone.description}"></td>
+        <td th:text="${phone.price}"></td>
+        <!-- Stock left, so the drop after a checkout is visible -->
+        <td th:text="${phone.copies}"></td>
+        <td>
+            <!-- Adding to the cart changes data, so it is a POST form sent to /cart/add.
+                 A plain link would send a GET, which the controller does not map. -->
+            <form th:action="@{/cart/add}" method="post">
+                <input type="hidden" name="productId" th:value="${phone.id}" />
+                <button type="submit">Add to Cart</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Fallback message displayed if no smartphones are available -->
+<div th:if="${smartphones == null or #lists.isEmpty(smartphones)}">
+    <p>No smartphones available at the moment.</p>
+</div>
+
+</body>
+</html>

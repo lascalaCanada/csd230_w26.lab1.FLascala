@@ -13,6 +13,8 @@ public class SmartPhoneEntity extends ElectronicProductEntity {
 
     private double screenSize;
     private int batteryCapacity;
+    // No 'copies' field here: the stock counter lives in ElectronicProductEntity.
+    // Declaring it again would map the same column twice.
 
     /**
      * Default no-argument constructor.
@@ -29,9 +31,10 @@ public class SmartPhoneEntity extends ElectronicProductEntity {
      * @param brand           The brand name
      * @param screenSize      Screen size in inches
      * @param batteryCapacity Battery capacity in mAh
+     * @param copies          Initial stock quantity
      */
-    public SmartPhoneEntity(double price, String description, String brand, double screenSize, int batteryCapacity) {
-        super(price, description, brand);
+    public SmartPhoneEntity(double price, String description, String brand, double screenSize, int batteryCapacity, int copies) {
+        super(price, description, brand, copies);
         this.screenSize = screenSize;
         this.batteryCapacity = batteryCapacity;
     }
@@ -56,10 +59,17 @@ public class SmartPhoneEntity extends ElectronicProductEntity {
 
     /**
      * Concrete implementation of sellItem from SaleableItem interface.
+     * Lowers the stock by one unit, as long as there is stock left.
      */
     @Override
     public void sellItem() {
-        System.out.println("Selling SmartPhone Entity: " + getBrand() + " - " + getDescription() + " for $" + getPrice());
+        if (getCopies() > 0) {
+            setCopies(getCopies() - 1);
+            System.out.println("Selling SmartPhone Entity: " + getBrand() + " - " + getDescription()
+                    + " for $" + getPrice() + ". Remaining copies: " + getCopies());
+        } else {
+            System.out.println("Cannot sell SmartPhone Entity: " + getBrand() + " - " + getDescription() + ". Out of stock.");
+        }
     }
 
     @Override

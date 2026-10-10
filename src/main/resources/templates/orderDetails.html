@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!-- Page title displayed in the browser tab -->
+    <title>Order Confirmation</title>
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<nav>
+    <a th:href="@{/books}">Books</a> |
+    <a th:href="@{/laptops}">Laptops</a> |
+    <a th:href="@{/smartphones}">Smartphones</a> |
+    <a th:href="@{/cart}">View Shopping Cart</a>
+</nav>
+
+<h1>Order Confirmation</h1>
+
+<!-- Order details wrapper -->
+<div th:if="${order != null}">
+    <p><strong>Order ID:</strong> <span th:text="${order.id}"></span></p>
+    <!-- #temporals formats LocalDateTime; the fixed pattern keeps the screenshot readable -->
+    <p><strong>Order Date:</strong>
+        <span th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm:ss')}"></span></p>
+    <!-- Total saved on the order at checkout time, always shown with two decimals -->
+    <p><strong>Total Amount Paid:</strong>
+        <span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 'COMMA', 2, 'POINT')}"></span></p>
+
+    <h3>Ordered Items</h3>
+    <table border="1" th:if="${order.products != null and not #lists.isEmpty(order.products)}">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Product Description / Title</th>
+            <th>Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Iterate over products associated with this placed order -->
+        <tr th:each="product : ${order.products}" th:if="${product != null}">
+            <td th:text="${product.id}"></td>
+            <!-- Only publications have a title; every other product type shows its description.
+                 Asking for product.title on a laptop would throw an error. -->
+            <td th:text="${product instanceof T(csd230.lab1.entities.PublicationEntity) ? product.title : product.description}"></td>
+            <!-- Uses getPrice() which correctly calls PublicationEntity.getPrice() for books -->
+            <td th:text="${#numbers.formatDecimal(product.getPrice(), 1, 'COMMA', 2, 'POINT')}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Fallback message displayed if order details are missing -->
+<div th:if="${order == null}">
+    <p>No order details available.</p>
+</div>
+
+</body>
+</html>

@@ -1,26 +1,25 @@
 package csd230.lab1.entities;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
 @Entity
 public abstract class PublicationEntity extends ProductEntity {
     private String title;
-    @Column(name = "pub_price") private double price;
+    //@Column(name = "pub_price") private double price;
     private int copies;
     public PublicationEntity() {}
-    public PublicationEntity(String t, double p, int c) { this.title = t; this.price = p; this.copies = c; }
+    public PublicationEntity(String t, double p, int c) { this.title = t; setPrice(p); this.copies = c; }
 
     @Override public void sellItem() {
         if (copies > 0) { copies--; System.out.println("Sold '" + title + "'. Remaining copies: " + copies); }
         else { System.out.println("Cannot sell '" + title + "'. Out of stock."); }
     }
-    @Override public double getPrice() { return price; }
+    //@Override public double getPrice() { return price; }
 
     public String getTitle() { return title; }
     public void setTitle(String t) { this.title = t; }
-    public void setPrice(double p) { this.price = p; }
+    //public void setPrice(double p) { this.price = p; }
     public int getCopies() { return copies; }
     public void setCopies(int c) { this.copies = c; }
-    @Override public String toString() { return "Pub{title='" + title + "', price=" + price + ", copies=" + copies + "}"; }
+    @Override public String toString() { return "Pub{title='" + title + "', price=" + getPrice() + ", copies=" + copies + "}"; }
 }

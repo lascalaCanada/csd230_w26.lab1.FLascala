@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 public abstract class ElectronicProductEntity extends ProductEntity {
 
     private String brand;
+    private int copies;
 
     /**
      * Default constructor required by JPA.
@@ -34,10 +35,12 @@ public abstract class ElectronicProductEntity extends ProductEntity {
      * @param price       Product price
      * @param description Product description
      * @param brand       Brand name
+     * @param copies      Stock volume
      */
-    public ElectronicProductEntity(double price, String description, String brand) {
+    public ElectronicProductEntity(double price, String description, String brand, int copies) {
         super(price, description);
         this.brand = brand;
+        this.copies = copies;
     }
 
     // Getters and Setters
@@ -49,6 +52,10 @@ public abstract class ElectronicProductEntity extends ProductEntity {
     public void setBrand(String brand) {
         this.brand = brand;
     }
+
+    public int getCopies() { return copies; }
+
+    public void setCopies(int copies) { this.copies = copies; }
 
     @Override
     public String toString() {
