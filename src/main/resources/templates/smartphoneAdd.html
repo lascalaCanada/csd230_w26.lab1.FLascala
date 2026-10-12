@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Smartphone</title>
+</head>
+<body>
+<h1>Add a new smartphone</h1>
+
+<!-- th:action adds the CSRF token automatically -->
+<form th:action="@{/smartphones/add}" method="post">
+    <div>
+        <label for="description">Model / description:</label>
+        <input type="text" id="description" name="description" required>
+    </div>
+    <div>
+        <label for="brand">Brand:</label>
+        <input type="text" id="brand" name="brand" required>
+    </div>
+    <div>
+        <label for="screenSize">Screen size (inches):</label>
+        <input type="number" id="screenSize" name="screenSize" step="0.1" min="1" required>
+    </div>
+    <div>
+        <label for="batteryCapacity">Battery (mAh):</label>
+        <input type="number" id="batteryCapacity" name="batteryCapacity" min="1" required>
+    </div>
+    <div>
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" step="0.01" min="0" required>
+    </div>
+    <div>
+        <label for="copies">Copies:</label>
+        <input type="number" id="copies" name="copies" min="0" required>
+    </div>
+    <button type="submit">Save</button>
+    <!-- type="button" means it does not submit the form; it only goes back to the list -->
+    <button type="button" th:onclick="|window.location.href='@{/smartphones}'|">Cancel</button>
+</form>
+</body>
+</html>

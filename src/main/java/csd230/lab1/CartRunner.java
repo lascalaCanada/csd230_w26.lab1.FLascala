@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import csd230.lab1.entities.UserEntity;
+import csd230.lab1.repositories.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 /**
  * Runner class to seed the database with initial sample products upon startup.
  */
@@ -25,8 +29,23 @@ public class CartRunner implements CommandLineRunner {
     @Autowired
     private SmartPhoneRepository smartPhoneRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    // Same BCrypt encoder defined in WebSecurityConfig
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public void run(String... args) throws Exception {
+
+        // Test users: one admin and one regular user. Passwords are encoded with BCrypt,
+        // because the login compares hashes and never the plain text.
+        if (userRepository.count() == 0) {
+            userRepository.save(new UserEntity("admin", passwordEncoder.encode("admin"), "ADMIN"));
+            userRepository.save(new UserEntity("user", passwordEncoder.encode("user"), "USER"));
+        }
+
         // Seed Books if table is empty using the parameterized constructor
         if (bookRepository.count() == 0) {
             BookEntity book1 = new BookEntity("Spring Boot in Action", 45.99, 10, "Craig Walls");
