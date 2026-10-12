@@ -9,6 +9,13 @@
     </head>
     <body>
 
+        <!-- Logged-in user area: username on the top right and the logout button -->
+        <div style="float: right;">
+            <span><strong sec:authentication="name">username</strong></span>
+            <!-- Only visible for users with the ADMIN role -->
+            <span sec:authorize="hasRole('ADMIN')">(admin)</span>
+        </div>
+
         <h1>Edit book</h1>
 
         <!-- The id goes in the URL; th:value fills each field with the current data of the book -->

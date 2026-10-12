@@ -1,11 +1,25 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
     <head>
         <meta charset="UTF-8">
         <!-- Page title displayed in the browser tab -->
         <title>Shopping Cart</title>
     </head>
     <body>
+
+        <!-- Logged-in user area: username on the top right and the logout button -->
+        <div style="float: right;">
+            <span><strong sec:authentication="name">username</strong></span>
+            <!-- Only visible for users with the ADMIN role -->
+            <span sec:authorize="hasRole('ADMIN')">(admin)</span>
+            <!-- Logout has to be a POST form; th:action adds the CSRF token automatically -->
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
 
         <!-- Top Navigation Bar: buttons that only send the browser to another page -->
         <nav>
