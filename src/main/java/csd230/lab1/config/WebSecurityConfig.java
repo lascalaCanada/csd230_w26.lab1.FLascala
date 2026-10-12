@@ -43,8 +43,10 @@ public class WebSecurityConfig {
                         // Anyone can see the login page, the register page and static files.
                         // /error is open too so real error messages are not hidden behind the login.
                         .requestMatchers("/login", "/register", "/error", "/css/**", "/js/**").permitAll()
-                        // Only admins can add, edit or delete books
-                        .requestMatchers("/books/add", "/books/edit/**", "/books/delete/**").hasRole("ADMIN")
+                        // Only admins can add, edit or delete books, laptops and smartphones
+                        .requestMatchers("/books/add", "/books/edit/**", "/books/delete/**",
+                                "/laptops/add", "/laptops/edit/**", "/laptops/delete/**",
+                                "/smartphones/add", "/smartphones/edit/**", "/smartphones/delete/**").hasRole("ADMIN")
                         // Everything else just needs a logged-in user
                         .anyRequest().authenticated()
                 )

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<!--<html xmlns:th="http://www.thymeleaf.org">-->
+
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
     <head>
         <meta charset="UTF-8">
         <!-- Page title displayed in the browser tab -->
@@ -20,12 +21,12 @@
             </form>
         </div>
 
-        <!-- Top Navigation Bar -->
+        <!-- Top Navigation Bar: buttons that only send the browser to another page -->
         <nav>
-            <a th:href="@{/books}">Books</a> |
-            <a th:href="@{/laptops}">Laptops</a> |
-            <a th:href="@{/smartphones}">Smartphones</a> |
-            <a th:href="@{/cart}">View Shopping Cart</a>
+            <button type="button" th:onclick="|window.location.href='@{/books}'|">Books</button>
+            <button type="button" th:onclick="|window.location.href='@{/laptops}'|">Laptops</button>
+            <button type="button" th:onclick="|window.location.href='@{/smartphones}'|">Smartphones</button>
+            <button type="button" th:onclick="|window.location.href='@{/cart}'|">View Shopping Cart</button>
         </nav>
 
         <h1>Available Smartphones</h1>
@@ -33,9 +34,9 @@
         <!-- Message sent by the controller when a smartphone cannot be deleted -->
         <p th:if="${error}" th:text="${error}" style="color: red;"></p>
 
-        <!-- Only admins see this link -->
+        <!-- Only admins see this button -->
         <p sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/smartphones/add}">Add new smartphone</a>
+            <button type="button" th:onclick="|window.location.href='@{/smartphones/add}'|">Add new smartphone</button>
         </p>
 
         <!-- Smartphones Table (rendered only if smartphones list is not empty) -->
@@ -72,7 +73,7 @@
                             <button type="submit">Edit</button>
                         </form>
 
-                        <!-- A GET form with a button, so Delete looks the same as the other buttons -->
+                        <!-- Delete must be a POST form, never a plain link -->
                         <form th:action="@{/smartphones/delete/{id}(id=${phone.id})}" method="post" style="display: inline;"
                               onsubmit="return confirm('Delete this smartphone?');">
                             <button type="submit">Delete</button>

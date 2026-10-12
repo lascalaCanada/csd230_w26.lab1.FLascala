@@ -7,12 +7,12 @@
     </head>
     <body>
 
-        <!-- Top Navigation Bar -->
+        <!-- Top Navigation Bar: buttons that only send the browser to another page -->
         <nav>
-            <a th:href="@{/books}">Books</a> |
-            <a th:href="@{/laptops}">Laptops</a> |
-            <a th:href="@{/smartphones}">Smartphones</a> |
-            <a th:href="@{/cart}">View Shopping Cart</a>
+            <button type="button" th:onclick="|window.location.href='@{/books}'|">Books</button>
+            <button type="button" th:onclick="|window.location.href='@{/laptops}'|">Laptops</button>
+            <button type="button" th:onclick="|window.location.href='@{/smartphones}'|">Smartphones</button>
+            <button type="button" th:onclick="|window.location.href='@{/cart}'|">View Shopping Cart</button>
         </nav>
 
         <h1>Shopping Cart Details</h1>
