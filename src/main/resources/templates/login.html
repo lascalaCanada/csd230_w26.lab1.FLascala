@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Login</title>
+    </head>
+    <body>
+        <h1>Login</h1>
+
+        <!-- Spring Security redirects to /login?error when the username or password is wrong -->
+        <p th:if="${param.error}" style="color: red;">Invalid username or password.</p>
+
+        <!-- Shown after a successful logout (/login?logout) -->
+        <p th:if="${param.logout}" style="color: green;">You have been logged out.</p>
+
+        <!-- Shown after a successful registration (/login?registered) -->
+        <p th:if="${param.registered}" style="color: green;">Account created! You can log in now.</p>
+
+        <!-- th:action adds the CSRF token automatically, which Spring Security requires on POST forms -->
+        <form th:action="@{/login}" method="post">
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+
+        <p>Don't have an account? <a th:href="@{/register}">Register here</a></p>
+    </body>
+</html>

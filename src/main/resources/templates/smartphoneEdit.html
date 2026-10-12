@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Edit Smartphone</title>
+    </head>
+    <body>
+
+        <!-- Logged-in user area: username on the top right and the logout button -->
+        <div style="float: right;">
+            <span><strong sec:authentication="name">username</strong></span>
+            <!-- Only visible for users with the ADMIN role -->
+            <span sec:authorize="hasRole('ADMIN')">(admin)</span>
+        </div>
+
+        <h1>Edit smartphone</h1>
+
+        <!-- The id goes in the URL; th:value fills each field with the current data -->
+        <form th:action="@{/smartphones/edit/{id}(id=${phone.id})}" method="post">
+            <div>
+                <label for="description">Model / description:</label>
+                <input type="text" id="description" name="description" th:value="${phone.description}" required>
+            </div>
+            <div>
+                <label for="brand">Brand:</label>
+                <input type="text" id="brand" name="brand" th:value="${phone.brand}" required>
+            </div>
+            <div>
+                <label for="screenSize">Screen size (inches):</label>
+                <input type="number" id="screenSize" name="screenSize" step="0.1" min="1" th:value="${phone.screenSize}" required>
+            </div>
+            <div>
+                <label for="batteryCapacity">Battery (mAh):</label>
+                <input type="number" id="batteryCapacity" name="batteryCapacity" min="1" th:value="${phone.batteryCapacity}" required>
+            </div>
+            <div>
+                <label for="price">Price:</label>
+                <input type="number" id="price" name="price" step="0.01" min="0" th:value="${phone.price}" required>
+            </div>
+            <div>
+                <label for="copies">Copies:</label>
+                <input type="number" id="copies" name="copies" min="0" th:value="${phone.copies}" required>
+            </div>
+            <button type="submit">Update</button>
+            <button type="button" th:onclick="|window.location.href='@{/smartphones}'|">Cancel</button>
+        </form>
+    </body>
+</html>

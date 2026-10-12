@@ -9,7 +9,7 @@ import java.util.Set;
  * Entity representing the shopping cart.
  */
 @Entity
-@Table(name = "carts")
+@Table(name = "cart_entity")
 public class CartEntity implements Serializable {
 
     @Id
@@ -23,6 +23,12 @@ public class CartEntity implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
     private Set<ProductEntity> products = new HashSet<>();
+
+    // The owner of this cart. Each user has exactly one cart, and the "user_id" column
+    // in the cart_entity table points to the users table.
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     public CartEntity() {
     }
@@ -41,6 +47,14 @@ public class CartEntity implements Serializable {
 
     public void setProducts(Set<ProductEntity> products) {
         this.products = products;
+    }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 
     public void addProduct(ProductEntity product) {
