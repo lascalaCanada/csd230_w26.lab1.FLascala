@@ -43,6 +43,8 @@ public class WebSecurityConfig {
                         // Anyone can see the login page, the register page and static files.
                         // /error is open too so real error messages are not hidden behind the login.
                         .requestMatchers("/login", "/register", "/error", "/css/**", "/js/**").permitAll()
+                        // The REST API and the Swagger pages are open for this lab, so curl works without a login
+                        .requestMatchers("/api/rest/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         // Only admins can add, edit or delete books, laptops and smartphones
                         .requestMatchers("/books/add", "/books/edit/**", "/books/delete/**",
                                 "/laptops/add", "/laptops/edit/**", "/laptops/delete/**",
@@ -62,6 +64,10 @@ public class WebSecurityConfig {
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 );
+
+        // CSRF tokens are only needed for browser forms. curl and Swagger do not send one,
+        // so CSRF is ignored only for the REST API; the normal pages stay protected.
+        http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/rest/**"));
 
         return http.build();
     }

@@ -26,7 +26,7 @@ public class BookEntity extends PublicationEntity {
      * @param copies Initial stock quantity
      * @param author Book author name
      */
-    public BookEntity(String title, double price, int copies, String author) {
+    public BookEntity(String title, Double price, Integer copies, String author) {
         super(title, price, copies);
         this.author = author;
     }

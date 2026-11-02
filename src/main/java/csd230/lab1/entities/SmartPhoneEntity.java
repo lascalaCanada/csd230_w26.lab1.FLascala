@@ -11,8 +11,9 @@ import jakarta.persistence.Entity;
 @DiscriminatorValue("SMARTPHONE")
 public class SmartPhoneEntity extends ElectronicProductEntity {
 
-    private double screenSize;
-    private int batteryCapacity;
+    // Wrapper types (Double, Integer) so a JSON null can be read without an error; the default is 0
+    private Double screenSize = 0.0;
+    private Integer batteryCapacity = 0;
     // No 'copies' field here: the stock counter lives in ElectronicProductEntity.
     // Declaring it again would map the same column twice.
 
@@ -33,7 +34,7 @@ public class SmartPhoneEntity extends ElectronicProductEntity {
      * @param batteryCapacity Battery capacity in mAh
      * @param copies          Initial stock quantity
      */
-    public SmartPhoneEntity(double price, String description, String brand, double screenSize, int batteryCapacity, int copies) {
+    public SmartPhoneEntity(Double price, String description, String brand, Double screenSize, Integer batteryCapacity, Integer copies) {
         super(price, description, brand, copies);
         this.screenSize = screenSize;
         this.batteryCapacity = batteryCapacity;
@@ -41,19 +42,19 @@ public class SmartPhoneEntity extends ElectronicProductEntity {
 
     // Getters and Setters
 
-    public double getScreenSize() {
+    public Double getScreenSize() {
         return screenSize;
     }
 
-    public void setScreenSize(double screenSize) {
+    public void setScreenSize(Double screenSize) {
         this.screenSize = screenSize;
     }
 
-    public int getBatteryCapacity() {
+    public Integer getBatteryCapacity() {
         return batteryCapacity;
     }
 
-    public void setBatteryCapacity(int batteryCapacity) {
+    public void setBatteryCapacity(Integer batteryCapacity) {
         this.batteryCapacity = batteryCapacity;
     }
 
@@ -63,7 +64,8 @@ public class SmartPhoneEntity extends ElectronicProductEntity {
      */
     @Override
     public void sellItem() {
-        if (getCopies() > 0) {
+        // copies can be null, so it is checked before the comparison
+        if (getCopies() != null && getCopies() > 0) {
             setCopies(getCopies() - 1);
             System.out.println("Selling SmartPhone Entity: " + getBrand() + " - " + getDescription()
                     + " for $" + getPrice() + ". Remaining copies: " + getCopies());

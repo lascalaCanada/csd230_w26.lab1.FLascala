@@ -1,21 +1,18 @@
 package csd230.lab1.entities;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 
 @Entity @DiscriminatorValue("TICKET")
 public class TicketEntity extends ProductEntity {
-    private String description;
-    @Column(name = "ticket_price") private double price;
     public TicketEntity() {}
-    public TicketEntity(String d, double p) { this.description = d; this.price = p; }
+    // price and description are inherited from ProductEntity, so they are saved in the same columns as the other products
+    public TicketEntity(String d, Double p) {
+        setDescription(d);
+        setPrice(p);
+    }
 
-    @Override public void sellItem() { System.out.println("Selling Ticket: " + description + " for $" + price); }
-    @Override public double getPrice() { return price; }
+    @Override public void sellItem() { System.out.println("Selling Ticket: " + getDescription() + " for $" + getPrice()); }
 
-    public String getDescription() { return description; }
-    public void setDescription(String d) { this.description = d; }
-    public void setPrice(double p) { this.price = p; }
-    @Override public String toString() { return "Ticket{desc='" + description + "', price=" + price + "}"; }
+    @Override public String toString() { return "Ticket{desc='" + getDescription() + "', price=" + getPrice() + "}"; }
 }

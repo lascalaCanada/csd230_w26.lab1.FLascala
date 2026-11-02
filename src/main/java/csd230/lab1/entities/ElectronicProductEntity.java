@@ -10,7 +10,8 @@ import jakarta.persistence.Entity;
 public abstract class ElectronicProductEntity extends ProductEntity {
 
     private String brand;
-    private int copies;
+    // Wrapper type (Integer) so a JSON null can be read without an error; the default is 0
+    private Integer copies = 0;
 
     /**
      * Default constructor required by JPA.
@@ -37,7 +38,7 @@ public abstract class ElectronicProductEntity extends ProductEntity {
      * @param brand       Brand name
      * @param copies      Stock volume
      */
-    public ElectronicProductEntity(double price, String description, String brand, int copies) {
+    public ElectronicProductEntity(Double price, String description, String brand, Integer copies) {
         super(price, description);
         this.brand = brand;
         this.copies = copies;
@@ -53,9 +54,9 @@ public abstract class ElectronicProductEntity extends ProductEntity {
         this.brand = brand;
     }
 
-    public int getCopies() { return copies; }
+    public Integer getCopies() { return copies; }
 
-    public void setCopies(int copies) { this.copies = copies; }
+    public void setCopies(Integer copies) { this.copies = copies; }
 
     @Override
     public String toString() {
