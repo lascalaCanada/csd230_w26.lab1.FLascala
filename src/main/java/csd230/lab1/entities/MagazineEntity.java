@@ -10,12 +10,13 @@ import java.time.LocalDateTime;
 import java.util.Date;
 @Entity @DiscriminatorValue("MAGAZINE")
 public class MagazineEntity extends PublicationEntity {
-    private int orderQty;
+    // Wrapper type (Integer) so a JSON null can be read without an error; the default is 0
+    private Integer orderQty = 0;
     private LocalDateTime currentIssue;
     public MagazineEntity() {}
-    public MagazineEntity(String t, double p, int c, int o, LocalDateTime d) { super(t, p, c); this.orderQty = o; this.currentIssue = d; }
-    public int getOrderQty() { return orderQty; }
-    public void setOrderQty(int o) { this.orderQty = o; }
+    public MagazineEntity(String t, Double p, Integer c, Integer o, LocalDateTime d) { super(t, p, c); this.orderQty = o; this.currentIssue = d; }
+    public Integer getOrderQty() { return orderQty; }
+    public void setOrderQty(Integer o) { this.orderQty = o; }
     public void setCurrentIssue(LocalDateTime d) { this.currentIssue = d; }
     public LocalDateTime getCurrentIssue() { return currentIssue; }
     @Override public String toString() { return "Mag{issue=" + currentIssue + ", " + super.toString() + "}"; }

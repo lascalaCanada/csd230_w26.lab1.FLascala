@@ -19,7 +19,8 @@ public abstract class ProductEntity implements Serializable, SaleableItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private double price;
+    // Wrapper type (Double) so a JSON null can be read without an error; the default is 0.0
+    private Double price = 0.0;
     private String description;
 
     /**
@@ -34,7 +35,7 @@ public abstract class ProductEntity implements Serializable, SaleableItem {
      * @param price       The unit price of the product
      * @param description The textual description of the product
      */
-    public ProductEntity(double price, String description) {
+    public ProductEntity(Double price, String description) {
         this.price = price;
         this.description = description;
     }
@@ -51,10 +52,14 @@ public abstract class ProductEntity implements Serializable, SaleableItem {
 
     @Override
     public double getPrice() {
+        // price is a Double and can be null, so return 0.0 instead of failing when it is unboxed
+        if (price == null) {
+            return 0.0;
+        }
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

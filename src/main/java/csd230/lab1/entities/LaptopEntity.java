@@ -11,8 +11,9 @@ import jakarta.persistence.Entity;
 @DiscriminatorValue("LAPTOP")
 public class LaptopEntity extends ElectronicProductEntity {
 
-    private int ramGb;
-    private int storageGb;
+    // Wrapper types (Integer) so a JSON null can be read without an error; the default is 0
+    private Integer ramGb = 0;
+    private Integer storageGb = 0;
     private String processor;
     // No 'copies' field here: the stock counter lives in ElectronicProductEntity.
     // Declaring it again would map the same column twice.
@@ -35,7 +36,7 @@ public class LaptopEntity extends ElectronicProductEntity {
      * @param processor   Processor model
      * @param copies      Initial stock quantity
      */
-    public LaptopEntity(double price, String description, String brand, int ramGb, int storageGb, String processor, int copies) {
+    public LaptopEntity(Double price, String description, String brand, Integer ramGb, Integer storageGb, String processor, Integer copies) {
         super(price, description, brand, copies);
         this.ramGb = ramGb;
         this.storageGb = storageGb;
@@ -44,19 +45,19 @@ public class LaptopEntity extends ElectronicProductEntity {
 
     // Getters and Setters
 
-    public int getRamGb() {
+    public Integer getRamGb() {
         return ramGb;
     }
 
-    public void setRamGb(int ramGb) {
+    public void setRamGb(Integer ramGb) {
         this.ramGb = ramGb;
     }
 
-    public int getStorageGb() {
+    public Integer getStorageGb() {
         return storageGb;
     }
 
-    public void setStorageGb(int storageGb) {
+    public void setStorageGb(Integer storageGb) {
         this.storageGb = storageGb;
     }
 
@@ -74,7 +75,8 @@ public class LaptopEntity extends ElectronicProductEntity {
      */
     @Override
     public void sellItem() {
-        if (getCopies() > 0) {
+        // copies can be null, so it is checked before the comparison
+        if (getCopies() != null && getCopies() > 0) {
             setCopies(getCopies() - 1);
             System.out.println("Selling Laptop Entity: " + getBrand() + " - " + getDescription()
                     + " for $" + getPrice() + ". Remaining copies: " + getCopies());
