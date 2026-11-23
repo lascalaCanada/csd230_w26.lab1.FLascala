@@ -1,6 +1,7 @@
 package csd230.lab1.entities;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 // Represents a person who can log in to the application.
 // The table is called "users" because "user" is a reserved word in some databases.
@@ -50,6 +51,9 @@ public class UserEntity {
         this.username = username;
     }
 
+    // WRITE_ONLY: the password can be read from incoming JSON but is never written to JSON output,
+    // so the BCrypt hash does not leak when a user is nested inside a cart response
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public String getPassword() {
         return password;
     }

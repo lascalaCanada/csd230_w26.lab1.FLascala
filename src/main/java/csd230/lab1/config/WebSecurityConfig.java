@@ -68,12 +68,16 @@ public class WebSecurityConfig {
                         .requestMatchers("/books/add", "/books/edit/**", "/books/delete/**",
                                 "/laptops/add", "/laptops/edit/**", "/laptops/delete/**",
                                 "/smartphones/add", "/smartphones/edit/**", "/smartphones/delete/**").hasRole("ADMIN")
-                        // TEMPORARY: early React exercises only; restore protection in 2.12
-                        .requestMatchers("/api/rest/**").permitAll()
+                        // Current-user cart actions: the controller finds the owner from the logged-in user
+                        .requestMatchers(HttpMethod.GET, "/api/rest/carts/mine").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/rest/carts/mine/products/*").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/rest/carts/mine/products/*").hasAnyRole("USER", "ADMIN")
+                        // Any other cart URL is administrative (it could show someone else's cart)
+                        .requestMatchers("/api/rest/carts", "/api/rest/carts/**").hasRole("ADMIN")
                         // REST API: reading (GET) is allowed for USER and ADMIN
                         .requestMatchers(HttpMethod.GET, "/api/rest/**").hasAnyRole("USER", "ADMIN")
                         // REST API: create, update and delete are only for ADMIN.
-                        // The GET rule must come first because the first matching rule wins
+                        // The narrower rules above must come first because the first matching rule wins
                         .requestMatchers("/api/rest/**").hasRole("ADMIN")
                         // Everything else just needs a logged-in user
                         .anyRequest().authenticated()
