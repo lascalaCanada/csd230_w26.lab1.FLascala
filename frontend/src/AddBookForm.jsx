@@ -1,8 +1,12 @@
+import useAuth from './useAuth.js';
 import api from './api.js';
 import { useState } from 'react';
 
 // Controlled form: every input value lives in React state (the draft of a new book)
 export default function AddBookForm({ onBookAdded }) {
+  const { token } = useAuth();
+  // True only while the same login that opened this form is still active
+  const isCurrent = () => localStorage.getItem('token') === token;
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [price, setPrice] = useState('');
@@ -19,13 +23,15 @@ export default function AddBookForm({ onBookAdded }) {
       const response = await api.post('/books', {
         title, author, price: Number(price), copies: Number(copies)
       });
+      // A response that arrives after logout or after another login is ignored
+      if (!isCurrent()) return;
       const savedBook = response.data;
       // Tell the parent (App) about the saved book, which already has its id
       onBookAdded(savedBook);
       // Clear the form only after a successful save, so a failed save keeps the typed values
       setTitle(''); setAuthor(''); setPrice(''); setCopies(10);
-    } catch (err) { setError(err.message); }
-    finally { setSaving(false); }
+    } catch (err) { if (isCurrent()) setError(err.message); }
+    finally { if (isCurrent()) setSaving(false); }
   }
 
   return <form onSubmit={handleSubmit}>

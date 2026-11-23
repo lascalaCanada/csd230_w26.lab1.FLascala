@@ -1,8 +1,12 @@
+import useAuth from './useAuth.js';
 import api from './api.js';
 import { useState } from 'react';
 
 // Controlled form for a new magazine (same pattern as AddBookForm)
 export default function MagazineForm({ onMagazineAdded }) {
+  const { token } = useAuth();
+  // True only while the same login that opened this form is still active
+  const isCurrent = () => localStorage.getItem('token') === token;
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [copies, setCopies] = useState(1);
@@ -19,10 +23,12 @@ export default function MagazineForm({ onMagazineAdded }) {
         title, price: Number(price), copies: Number(copies),
         orderQty: Number(orderQty), currentIssue
       });
+      // A response that arrives after logout or after another login is ignored
+      if (!isCurrent()) return;
       onMagazineAdded(response.data);
       setTitle(''); setPrice(''); setCopies(1); setOrderQty(1); setCurrentIssue('');
-    } catch (err) { setError(err.message); }
-    finally { setSaving(false); }
+    } catch (err) { if (isCurrent()) setError(err.message); }
+    finally { if (isCurrent()) setSaving(false); }
   }
 
   return <form onSubmit={handleSubmit}>

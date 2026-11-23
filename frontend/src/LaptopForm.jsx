@@ -1,8 +1,12 @@
+import useAuth from './useAuth.js';
 import api from './api.js';
 import { useState } from 'react';
 
 // Controlled form for a new laptop. Laptop has no title: its name is the "description" field
 export default function LaptopForm({ onLaptopAdded }) {
+  const { token } = useAuth();
+  // True only while the same login that opened this form is still active
+  const isCurrent = () => localStorage.getItem('token') === token;
   const [brand, setBrand] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -21,12 +25,14 @@ export default function LaptopForm({ onLaptopAdded }) {
         brand, description, price: Number(price), copies: Number(copies),
         ramGb: Number(ramGb), storageGb: Number(storageGb), processor
       });
+      // A response that arrives after logout or after another login is ignored
+      if (!isCurrent()) return;
       // The saved laptop (with its new id) goes to App, which adds it to the list
       onLaptopAdded(response.data);
       setBrand(''); setDescription(''); setPrice(''); setCopies(1);
       setRamGb(8); setStorageGb(256); setProcessor('');
-    } catch (err) { setError(err.message); }
-    finally { setSaving(false); }
+    } catch (err) { if (isCurrent()) setError(err.message); }
+    finally { if (isCurrent()) setSaving(false); }
   }
 
   return <form onSubmit={handleSubmit}>
