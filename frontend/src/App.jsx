@@ -1,3 +1,4 @@
+import api from './api.js';
 import { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router';
 import NavBar from './NavBar.jsx';
@@ -26,12 +27,9 @@ export default function App() {
   // Load the books once, when App appears on the screen
   useEffect(() => {
     let active = true;
-    fetch('/api/rest/books')
-      .then(res => {
-        if (!res.ok) throw new Error(`Load failed (${res.status})`);
-        return res.json();
-      })
-      .then(data => { if (active) setBooks(data); })
+    // Axios rejects non-2xx answers by itself and gives the parsed JSON in response.data
+    api.get('/books')
+      .then(response => { if (active) setBooks(response.data); })
       .catch(err => { if (active) setError(err.message); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
@@ -40,12 +38,8 @@ export default function App() {
   // Load the laptops once, in the same way
   useEffect(() => {
     let active = true;
-    fetch('/api/rest/laptops')
-      .then(res => {
-        if (!res.ok) throw new Error(`Load failed (${res.status})`);
-        return res.json();
-      })
-      .then(data => { if (active) setLaptops(data); })
+    api.get('/laptops')
+      .then(response => { if (active) setLaptops(response.data); })
       .catch(err => { if (active) setLaptopsError(err.message); })
       .finally(() => { if (active) setLaptopsLoading(false); });
     return () => { active = false; };
@@ -62,20 +56,17 @@ export default function App() {
     if (!window.confirm('Delete this book?')) return;
     setError('');
     try {
-      const response = await fetch(`/api/rest/books/${id}`, { method: 'DELETE' });
-      if (!response.ok) throw new Error(`Delete failed (${response.status})`);
+      // A failed DELETE throws here, so the row stays; a successful one has an empty body
+      await api.delete(`/books/${id}`);
       // Remove the row only after the server accepted the delete
       setBooks(previous => previous.filter(book => book.id !== id));
     } catch (err) { setError(err.message); }
   }
 
   async function handleUpdateBook(id, data) {
-    const response = await fetch(`/api/rest/books/${id}`, {
-      method: 'PUT', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    if (!response.ok) throw new Error(`Update failed (${response.status})`);
-    const savedBook = await response.json();
+    // Axios turns the plain object into JSON by itself
+    const response = await api.put(`/books/${id}`, data);
+    const savedBook = response.data;
     // Replace only the book with this id by the version saved on the server
     setBooks(previous => previous.map(book => book.id === id ? savedBook : book));
   }
@@ -91,19 +82,14 @@ export default function App() {
     if (!window.confirm('Delete this laptop?')) return;
     setLaptopsError('');
     try {
-      const response = await fetch(`/api/rest/laptops/${id}`, { method: 'DELETE' });
-      if (!response.ok) throw new Error(`Delete failed (${response.status})`);
+      await api.delete(`/laptops/${id}`);
       setLaptops(previous => previous.filter(laptop => laptop.id !== id));
     } catch (err) { setLaptopsError(err.message); }
   }
 
   async function handleUpdateLaptop(id, data) {
-    const response = await fetch(`/api/rest/laptops/${id}`, {
-      method: 'PUT', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    if (!response.ok) throw new Error(`Update failed (${response.status})`);
-    const savedLaptop = await response.json();
+    const response = await api.put(`/laptops/${id}`, data);
+    const savedLaptop = response.data;
     setLaptops(previous => previous.map(laptop => laptop.id === id ? savedLaptop : laptop));
   }
 

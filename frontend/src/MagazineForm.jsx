@@ -1,3 +1,4 @@
+import api from './api.js';
 import { useState } from 'react';
 
 // Controlled form for a new magazine (same pattern as AddBookForm)
@@ -14,13 +15,11 @@ export default function MagazineForm({ onMagazineAdded }) {
     event.preventDefault(); setError(''); setSaving(true);
     try {
       // currentIssue is sent as typed (a local date-time like 2026-11-07T09:30:15), without timezone
-      const response = await fetch('/api/rest/magazines', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, price: Number(price),
-          copies: Number(copies), orderQty: Number(orderQty), currentIssue })
+      const response = await api.post('/magazines', {
+        title, price: Number(price), copies: Number(copies),
+        orderQty: Number(orderQty), currentIssue
       });
-      if (!response.ok) throw new Error(`Save failed (${response.status})`);
-      onMagazineAdded(await response.json());
+      onMagazineAdded(response.data);
       setTitle(''); setPrice(''); setCopies(1); setOrderQty(1); setCurrentIssue('');
     } catch (err) { setError(err.message); }
     finally { setSaving(false); }

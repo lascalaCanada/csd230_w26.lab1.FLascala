@@ -1,3 +1,4 @@
+import api from './api.js';
 import { useState } from 'react';
 
 // Controlled form for a new laptop. Laptop has no title: its name is the "description" field
@@ -16,14 +17,12 @@ export default function LaptopForm({ onLaptopAdded }) {
     event.preventDefault(); setError(''); setSaving(true);
     try {
       // The JSON names match the Java entity: brand, description, price, copies, ramGb, storageGb, processor
-      const response = await fetch('/api/rest/laptops', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ brand, description, price: Number(price), copies: Number(copies),
-          ramGb: Number(ramGb), storageGb: Number(storageGb), processor })
+      const response = await api.post('/laptops', {
+        brand, description, price: Number(price), copies: Number(copies),
+        ramGb: Number(ramGb), storageGb: Number(storageGb), processor
       });
-      if (!response.ok) throw new Error(`Save failed (${response.status})`);
       // The saved laptop (with its new id) goes to App, which adds it to the list
-      onLaptopAdded(await response.json());
+      onLaptopAdded(response.data);
       setBrand(''); setDescription(''); setPrice(''); setCopies(1);
       setRamGb(8); setStorageGb(256); setProcessor('');
     } catch (err) { setError(err.message); }

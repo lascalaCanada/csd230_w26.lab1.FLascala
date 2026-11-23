@@ -1,3 +1,4 @@
+import api from './api.js';
 import { useState } from 'react';
 
 // Controlled form: every input value lives in React state (the draft of a new book)
@@ -15,13 +16,10 @@ export default function AddBookForm({ onBookAdded }) {
     setError(''); setSaving(true);
     try {
       // Input values are strings, so price and copies are converted to numbers for the backend
-      const response = await fetch('/api/rest/books', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, author, price: Number(price), copies: Number(copies) })
+      const response = await api.post('/books', {
+        title, author, price: Number(price), copies: Number(copies)
       });
-      if (!response.ok) throw new Error(`Save failed (${response.status})`);
-      const savedBook = await response.json();
+      const savedBook = response.data;
       // Tell the parent (App) about the saved book, which already has its id
       onBookAdded(savedBook);
       // Clear the form only after a successful save, so a failed save keeps the typed values
