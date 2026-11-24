@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // One book row. It can show the book or an inline edit form
-export default function Book({ book, onDelete, onUpdate }) {
+export default function Book({ book, onDelete, onUpdate, onAddToCart, cartPending, canManage }) {
   const [isEditing, setIsEditing] = useState(false);
   // The draft keeps the typed values until Save; the saved book (props) is never changed here
   const [draft, setDraft] = useState(book);
@@ -43,7 +43,10 @@ export default function Book({ book, onDelete, onUpdate }) {
   return <article className="book-row">
     <h3>{book.title}</h3>
     <p>{book.author} | ${Number(book.price).toFixed(2)} | Copies: {book.copies}</p>
-    <button onClick={beginEdit}>Edit</button>
-    <button onClick={() => onDelete(book.id)}>Delete</button>
+    {/* The cart callback comes from App; only the product id is sent */}
+    <button disabled={cartPending} onClick={() => onAddToCart(book.id)}>Add to Cart</button>
+    {/* Edit and Delete are only for administrators; Add to Cart stays for both roles */}
+    {canManage && <button onClick={beginEdit}>Edit</button>}
+    {canManage && <button onClick={() => onDelete(book.id)}>Delete</button>}
   </article>;
 }

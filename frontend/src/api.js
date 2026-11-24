@@ -15,4 +15,26 @@ api.interceptors.request.use(config => {
   return config;
 });
 
+// Response interceptor: a protected 401 means the token is missing, invalid or expired.
+// A 403 only means "no permission" for that account, so it never logs the user out.
+let redirecting = false;
+api.interceptors.response.use(response => response, error => {
+  const requestToken = error.config?.authToken;
+  // Only a request sent with the CURRENT token can end the session,
+  // so a late 401 from an old token cannot sign out a newer login
+  if (error.response?.status === 401 && requestToken &&
+      error.config.url !== '/auth/login' &&
+      requestToken === globalThis.localStorage?.getItem('token')) {
+    localStorage.removeItem('token');
+    // Tells AuthProvider to drop its token state
+    window.dispatchEvent(new Event('auth:invalid'));
+    // One full-page navigation, even when several requests fail together
+    if (!redirecting && window.location.pathname !== '/login') {
+      redirecting = true;
+      window.location.replace('/login?reauth=true');
+    }
+  }
+  return Promise.reject(error); // 403 is forbidden, not a logout.
+});
+
 export default api;

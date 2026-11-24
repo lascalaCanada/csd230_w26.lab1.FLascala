@@ -5,8 +5,8 @@ import MagazineForm from './MagazineForm.jsx';
 import Magazine from './Magazine.jsx';
 
 // Owns the magazine list because the form and the rows live on the same page
-export default function MagazineList() {
-  const { token } = useAuth();
+export default function MagazineList({ onAddToCart, cartPending }) {
+  const { token, isAdmin } = useAuth();
   // True only while the login that opened this page is still the active one
   const isCurrent = () => localStorage.getItem('token') === token;
   const [magazines, setMagazines] = useState([]);
@@ -46,13 +46,14 @@ export default function MagazineList() {
 
   return <section>
     <h1>Magazines</h1>
-    <MagazineForm onMagazineAdded={saved => { if (isCurrent()) setMagazines(previous => [...previous, saved]); }} />
+    {/* The add form is only shown to administrators */}
+    {isAdmin && <MagazineForm onMagazineAdded={saved => { if (isCurrent()) setMagazines(previous => [...previous, saved]); }} />}
     {loading && <p>Loading magazines...</p>}
     {error && <p role="alert">{error}</p>}
     {!loading && !error && magazines.length === 0 && <p>No magazines yet.</p>}
     <div className="magazine-list">
       {magazines.map(magazine => <Magazine key={magazine.id} {...magazine}
-        onUpdate={handleUpdateMagazine} onDelete={handleDeleteMagazine} />)}
+        onUpdate={handleUpdateMagazine} onDelete={handleDeleteMagazine} onAddToCart={onAddToCart} cartPending={cartPending} canManage={isAdmin} />)}
     </div>
   </section>;
 }

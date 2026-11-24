@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // One laptop row. It can show the laptop or an inline edit form (same idea as Book.jsx)
-export default function Laptop({ laptop, onDelete, onUpdate }) {
+export default function Laptop({ laptop, onDelete, onUpdate, onAddToCart, cartPending, canManage }) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(laptop);
   const [error, setError] = useState('');
@@ -46,7 +46,8 @@ export default function Laptop({ laptop, onDelete, onUpdate }) {
     <h3>{laptop.brand} - {laptop.description}</h3>
     <p>ID: {laptop.id} | Processor: {laptop.processor} | RAM: {laptop.ramGb} GB | Storage: {laptop.storageGb} GB</p>
     <p>Price: ${Number(laptop.price).toFixed(2)} | Copies: {laptop.copies}</p>
-    <button onClick={beginEdit}>Edit</button>
-    <button onClick={() => onDelete(laptop.id)}>Delete</button>
+    <button disabled={cartPending} onClick={() => onAddToCart(laptop.id)}>Add to Cart</button>
+    {canManage && <button onClick={beginEdit}>Edit</button>}
+    {canManage && <button onClick={() => onDelete(laptop.id)}>Delete</button>}
   </article>;
 }
