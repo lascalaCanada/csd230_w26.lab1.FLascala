@@ -1,3 +1,4 @@
+import errorText from './errorText.js';
 import { useState } from 'react';
 
 // One book row. It can show the book or an inline edit form
@@ -26,7 +27,7 @@ export default function Book({ book, onDelete, onUpdate, onAddToCart, cartPendin
       // Wait for the server: the editor closes only if the update was accepted
       await onUpdate(book.id, { ...draft, price: Number(draft.price), copies: Number(draft.copies) });
       setIsEditing(false);
-    } catch (err) { setError(err.message); }
+    } catch (err) { setError(errorText(err)); }
     finally { setSaving(false); }
   }
 

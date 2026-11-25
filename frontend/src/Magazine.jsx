@@ -1,3 +1,4 @@
+import errorText from './errorText.js';
 import { useState } from 'react';
 
 // One magazine row. The fields arrive as separate props (spread from the magazine object)
@@ -23,7 +24,7 @@ export default function Magazine({ id, title, price, copies, orderQty, currentIs
       await onUpdate(id, { ...draft, price: Number(draft.price),
         copies: Number(draft.copies), orderQty: Number(draft.orderQty) });
       setIsEditing(false);
-    } catch (err) { setError(err.message); }
+    } catch (err) { setError(errorText(err)); }
     finally { setSaving(false); }
   }
 

@@ -1,3 +1,4 @@
+import errorText from './errorText.js';
 import { useState } from 'react';
 
 // One laptop row. It can show the laptop or an inline edit form (same idea as Book.jsx)
@@ -24,7 +25,7 @@ export default function Laptop({ laptop, onDelete, onUpdate, onAddToCart, cartPe
       await onUpdate(laptop.id, { ...draft, price: Number(draft.price), copies: Number(draft.copies),
         ramGb: Number(draft.ramGb), storageGb: Number(draft.storageGb) });
       setIsEditing(false);
-    } catch (err) { setError(err.message); }
+    } catch (err) { setError(errorText(err)); }
     finally { setSaving(false); }
   }
 

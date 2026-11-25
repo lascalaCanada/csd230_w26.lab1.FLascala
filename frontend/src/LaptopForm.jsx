@@ -1,3 +1,4 @@
+import errorText from './errorText.js';
 import useAuth from './useAuth.js';
 import api from './api.js';
 import { useState } from 'react';
@@ -31,7 +32,7 @@ export default function LaptopForm({ onLaptopAdded }) {
       onLaptopAdded(response.data);
       setBrand(''); setDescription(''); setPrice(''); setCopies(1);
       setRamGb(8); setStorageGb(256); setProcessor('');
-    } catch (err) { if (isCurrent()) setError(err.message); }
+    } catch (err) { if (isCurrent()) setError(errorText(err)); }
     finally { if (isCurrent()) setSaving(false); }
   }
 

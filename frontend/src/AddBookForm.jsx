@@ -1,3 +1,4 @@
+import errorText from './errorText.js';
 import useAuth from './useAuth.js';
 import api from './api.js';
 import { useState } from 'react';
@@ -30,7 +31,7 @@ export default function AddBookForm({ onBookAdded }) {
       onBookAdded(savedBook);
       // Clear the form only after a successful save, so a failed save keeps the typed values
       setTitle(''); setAuthor(''); setPrice(''); setCopies(10);
-    } catch (err) { if (isCurrent()) setError(err.message); }
+    } catch (err) { if (isCurrent()) setError(errorText(err)); }
     finally { if (isCurrent()) setSaving(false); }
   }
 

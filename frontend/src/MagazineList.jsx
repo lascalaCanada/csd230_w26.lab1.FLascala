@@ -1,3 +1,4 @@
+import errorText from './errorText.js';
 import useAuth from './useAuth.js';
 import api from './api.js';
 import { useState, useEffect } from 'react';
@@ -18,7 +19,7 @@ export default function MagazineList({ onAddToCart, cartPending }) {
     let active = true;
     api.get('/magazines')
       .then(response => { if (active && localStorage.getItem('token') === token) setMagazines(response.data); })
-      .catch(err => { if (active && localStorage.getItem('token') === token) setError(err.message); })
+      .catch(err => { if (active && localStorage.getItem('token') === token) setError(errorText(err)); })
       .finally(() => { if (active && localStorage.getItem('token') === token) setLoading(false); });
     // Cleanup: an old response must not update a component that is gone
     return () => { active = false; };
@@ -33,7 +34,7 @@ export default function MagazineList({ onAddToCart, cartPending }) {
       // The successful DELETE has no body, so there is no res.json() here.
       // filter builds a new array without the deleted magazine
       setMagazines(previous => previous.filter(magazine => magazine.id !== id));
-    } catch (err) { if (isCurrent()) setError(err.message); }
+    } catch (err) { if (isCurrent()) setError(errorText(err)); }
   }
 
   async function handleUpdateMagazine(id, data) {

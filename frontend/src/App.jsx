@@ -1,3 +1,4 @@
+import errorText from './errorText.js';
 import api from './api.js';
 import { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router';
@@ -65,7 +66,7 @@ function BookApp() {
     let active = true;
     api.get('/books')
       .then(response => { if (active && localStorage.getItem('token') === token) setBooks(response.data); })
-      .catch(err => { if (active && localStorage.getItem('token') === token) setError(err.message); })
+      .catch(err => { if (active && localStorage.getItem('token') === token) setError(errorText(err)); })
       .finally(() => { if (active && localStorage.getItem('token') === token) setLoading(false); });
     return () => { active = false; };
   }, [token]);
@@ -75,7 +76,7 @@ function BookApp() {
     let active = true;
     api.get('/laptops')
       .then(response => { if (active && localStorage.getItem('token') === token) setLaptops(response.data); })
-      .catch(err => { if (active && localStorage.getItem('token') === token) setLaptopsError(err.message); })
+      .catch(err => { if (active && localStorage.getItem('token') === token) setLaptopsError(errorText(err)); })
       .finally(() => { if (active && localStorage.getItem('token') === token) setLaptopsLoading(false); });
     return () => { active = false; };
   }, [token]);
@@ -86,7 +87,7 @@ function BookApp() {
     api.get('/carts/mine')
       // 204 means "no cart yet": it becomes null in the browser only, nothing is created
       .then(response => { if (active && localStorage.getItem('token') === token) setCart(response.status === 204 ? null : response.data); })
-      .catch(err => { if (active && localStorage.getItem('token') === token) setCartError(err.message); })
+      .catch(err => { if (active && localStorage.getItem('token') === token) setCartError(errorText(err)); })
       .finally(() => { if (active && localStorage.getItem('token') === token) setCartLoading(false); });
     return () => { active = false; };
   }, [token]);
@@ -101,7 +102,7 @@ function BookApp() {
       const response = remove ? await api.delete(path) : await api.post(path);
       if (isCurrent()) setCart(response.status === 204 ? null : response.data);
     // On failure the old cart (and badge) stay and the error is shown
-    } catch (err) { if (isCurrent()) setCartError(err.message); }
+    } catch (err) { if (isCurrent()) setCartError(errorText(err)); }
     finally { if (isCurrent()) setCartPending(false); }
   }
 
@@ -122,7 +123,7 @@ function BookApp() {
       if (!isCurrent()) return;
       // Remove the row only after the server accepted the delete
       setBooks(previous => previous.filter(book => book.id !== id));
-    } catch (err) { if (isCurrent()) setError(err.message); }
+    } catch (err) { if (isCurrent()) setError(errorText(err)); }
   }
 
   async function handleUpdateBook(id, data) {
@@ -149,7 +150,7 @@ function BookApp() {
       await api.delete(`/laptops/${id}`);
       if (!isCurrent()) return;
       setLaptops(previous => previous.filter(laptop => laptop.id !== id));
-    } catch (err) { if (isCurrent()) setLaptopsError(err.message); }
+    } catch (err) { if (isCurrent()) setLaptopsError(errorText(err)); }
   }
 
   async function handleUpdateLaptop(id, data) {

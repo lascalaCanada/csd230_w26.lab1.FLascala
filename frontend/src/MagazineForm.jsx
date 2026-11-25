@@ -1,3 +1,4 @@
+import errorText from './errorText.js';
 import useAuth from './useAuth.js';
 import api from './api.js';
 import { useState } from 'react';
@@ -27,7 +28,7 @@ export default function MagazineForm({ onMagazineAdded }) {
       if (!isCurrent()) return;
       onMagazineAdded(response.data);
       setTitle(''); setPrice(''); setCopies(1); setOrderQty(1); setCurrentIssue('');
-    } catch (err) { if (isCurrent()) setError(err.message); }
+    } catch (err) { if (isCurrent()) setError(errorText(err)); }
     finally { if (isCurrent()) setSaving(false); }
   }
 
