@@ -1,0 +1,53 @@
+import errorText from './errorText.js';
+import { useState } from 'react';
+
+// One book row. It can show the book or an inline edit form
+export default function Book({ book, onDelete, onUpdate, onAddToCart, cartPending, canManage }) {
+  const [isEditing, setIsEditing] = useState(false);
+  // The draft keeps the typed values until Save; the saved book (props) is never changed here
+  const [draft, setDraft] = useState(book);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  function beginEdit() {
+    // Always start from the saved values, so a cancelled edit leaves nothing behind
+    setDraft(book);
+    setError(''); setIsEditing(true);
+  }
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+    // Copy the draft and change only the field that was typed
+    setDraft(previous => ({ ...previous, [name]: value }));
+  }
+
+  async function handleSave(event) {
+    event.preventDefault(); setError(''); setSaving(true);
+    try {
+      // Wait for the server: the editor closes only if the update was accepted
+      await onUpdate(book.id, { ...draft, price: Number(draft.price), copies: Number(draft.copies) });
+      setIsEditing(false);
+    } catch (err) { setError(errorText(err)); }
+    finally { setSaving(false); }
+  }
+
+  if (isEditing) return <form className="book-row editing" onSubmit={handleSave}>
+    <label>Title<input name="title" value={draft.title ?? ''} onChange={handleChange} required /></label>
+    <label>Author<input name="author" value={draft.author ?? ''} onChange={handleChange} required /></label>
+    <label>Price<input name="price" type="number" min="0" step="0.01" value={draft.price} onChange={handleChange} required /></label>
+    <label>Copies<input name="copies" type="number" min="0" step="1" value={draft.copies} onChange={handleChange} required /></label>
+    <button disabled={saving}>Save</button>
+    <button type="button" disabled={saving} onClick={() => setIsEditing(false)}>Cancel</button>
+    {error && <p role="alert">{error}</p>}
+  </form>;
+
+  return <article className="book-row">
+    <h3>{book.title}</h3>
+    <p>{book.author} | ${Number(book.price).toFixed(2)} | Copies: {book.copies}</p>
+    {/* The cart callback comes from App; only the product id is sent */}
+    <button disabled={cartPending} onClick={() => onAddToCart(book.id)}>Add to Cart</button>
+    {/* Edit and Delete are only for administrators; Add to Cart stays for both roles */}
+    {canManage && <button onClick={beginEdit}>Edit</button>}
+    {canManage && <button onClick={() => onDelete(book.id)}>Delete</button>}
+  </article>;
+}
